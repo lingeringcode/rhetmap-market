@@ -2,7 +2,7 @@
   "name": "rhetmap-market",
   "version": "1.0.0",
   "description": "Dashboard for job market",
-  "proxy": "https://rhetmap-market.herokuapp.com",
+  "proxy": "https://rhetmap-market-dashboard.herokuapp.com",
   "scripts": {
     "start": "node server.js"
   },
