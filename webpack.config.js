@@ -2,6 +2,7 @@ var path = require('path')
 var webpack = require('webpack')
 
 module.exports = {
+  target: 'node',
   mode: "development",
   devtool: 'cheap-module-eval-source-map',
   entry: [

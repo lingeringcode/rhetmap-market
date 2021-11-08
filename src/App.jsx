@@ -1,80 +1,64 @@
 import React, { useState, useEffect, useRef } from "react"
 import * as d3 from "d3"
-import { getTimelineData, getScatterData } from "./utils/dummyData"
-
-import Timeline from "./Timeline"
 import ScatterPlot from "./ScatterPlot"
-import Histogram from "./Histogram"
-// import Timeline from "./completed/Timeline"
-// import ScatterPlot from "./completed/ScatterPlot"
-// import Histogram from "./completed/Histogram"
-
+import { useTooltip, tooltipContext } from "./utils/useTooltip"
 import "./styles.css"
 
+// Data accessor methods
 const parseDate = d3.timeParse("%m/%d/%Y")
 const dateAccessor = d => parseDate(d.date)
-const temperatureAccessor = d => d.temperature
-const humidityAccessor = d => d.humidity
+const weekAccessor = d => d.week
+const jobPostingsAccessor = d => d.postings
 
-const getData = () => ({
-  timeline: getTimelineData(),
-  scatter: getScatterData(),
-})
 const App = () => {
-  const [data, setData] = useState(getData())
 
-  useInterval(() => {
-    setData(getData())
-  }, 4000)
+  // Instantiate the API data
+  const [weekData, setRhetMapDataState] = useState([])
+
+  // Get and set the API data
+  useEffect(() => { getRhetMapData() }, [])
+
+  const getRhetMapData = async () => {
+    const response = await fetch('/api');
+    const jsonData = await response.json();
+    setRhetMapDataState(jsonData)
+    
+  };
+
+  const transformRMD = async (data) => {
+
+    const newData = await data.map(d => {
+      let rObj = {}
+      rObj['week'] = d.week
+      rObj['postings'] = d.postings
+      return rObj
+    })
+
+    console.log(newData)
+
+    return newData
+  }
+
+  const state = useTooltip()
 
   return (
     <div className="App">
       <h1>
-        Weather Dashboard
+        Rhetmap Job-Market Comparison Dashboard
       </h1>
       <div className="App__charts">
-        <Timeline
-          data={data.timeline}
-          xAccessor={dateAccessor}
-          yAccessor={temperatureAccessor}
-          label="Temperature"
-        />
-        <ScatterPlot
-          data={data.scatter}
-          xAccessor={humidityAccessor}
-          yAccessor={temperatureAccessor}
-          xLabel="Humidity"
-          yLabel="Temperature"
-        />
-        <Histogram
-          data={data.scatter}
-          xAccessor={humidityAccessor}
-          label="Humidity"
-        />
+        <tooltipContext.Provider value={state}>
+          <ScatterPlot 
+            data={weekData}
+            xAccessor={weekAccessor}
+            yAccessor={jobPostingsAccessor}
+            xLabel="Week"
+            yLabel="Job Postings"
+          />
+        </tooltipContext.Provider>
       </div>
     </div>
   )
 }
 
 export default App
-
-
-function useInterval(callback, delay) {
-  const savedCallback = useRef();
-
-  // Remember the latest callback.
-  useEffect(() => {
-    savedCallback.current = callback;
-  });
-
-  // Set up the interval.
-  useEffect(() => {
-    function tick() {
-      savedCallback.current();
-    }
-    if (delay !== null) {
-      let id = setInterval(tick, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
-}

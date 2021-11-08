@@ -1,12 +1,9 @@
-@font-face {
-    font-family: 'Inter var';
-    src: url('./../../Inter.var.woff2');
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
 
 body {
     padding: 1.6em 2em 4em;
     letter-spacing: -0.011em;
-    font-family: 'Inter var', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 16px;
     color: #34495e;
     background: #f1f3f5;
@@ -43,7 +40,8 @@ h1 {
 
 .ScatterPlot {
     height: 500px;
-    width: 500px;
+    min-width: 500px;
+    width: calc(100% + 1em);
     margin-right: 2em;
 }
 

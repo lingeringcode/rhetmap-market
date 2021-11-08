@@ -4,9 +4,21 @@ import * as d3 from "d3"
 import { accessorPropsType } from "./utils";
 
 const Line = ({ type, data, xAccessor, yAccessor, y0Accessor, interpolation, ...props }) => {
+  const lineGenerator = d3[type]()
+    .x(xAccessor)
+    .y(yAccessor)
+    .curve(interpolation)
+
+  if (type === "area") {
+    lineGenerator
+      .y0(y0Accessor)
+      .y1(yAccessor)
+  }
+
   return (
     <path {...props}
       className={`Line Line--type-${type}`}
+      d={lineGenerator(data)}
     />
   )
 }
